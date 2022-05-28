@@ -6,7 +6,12 @@ function App() {
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
   const [pairedNames, setPairedNames] = useState([]);
   const getApiData = async () => {
-    await fetch('data.json')
+    await fetch('data.json',{
+      headers : { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+       }
+    })
       .then(response => response.json())
       .then(result => {
         setData(result);
@@ -32,7 +37,7 @@ function App() {
           if (tagSetA.has(b.tags[i])) {
             tagMatchCount++;
           }
-          if (tagMatchCount > 1) {
+          if (tagMatchCount >= 2) {
             if (isNotCommonPairs(pairedNamesArr, [a.name, b.name])) {
               pairedNamesArr.push([a.name, b.name]);
             }
