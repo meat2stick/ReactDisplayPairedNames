@@ -8,12 +8,12 @@ https://github.com/meat2stick/ReactDisplayPairedNames
 
 This code could be seperate into 3 parts.<br />
 
-### Data initialisation
+### 1. Data initialisation
 getApiData() will be called during the initialisation of the component which will result in data fetching from data.json. <br />
 Upon successful fetching of the data, data will be stored in ApiData state and dataIsLoaded will be set to true. <br />
 When dataIsLoaded is set to true, pairedNamesWithTwoOrMoreTags() will be called. <br />
 
-### Data filtering
+### 2. Data filtering
 In this particular test, I need to find pairs of recipients from data.json and pair them up according to the tags that they have.<br />
 First thing that came to my mind was to use bruteforce method. <br />
 I wanted to loop recipients(A) against receipients(B) but I figured it would be a waste of resources because this type of looping will result in
@@ -37,7 +37,7 @@ Therefore, we do not need to recheck from the beginning.
 At the last element, this element will not be looped or checked with others because it is the last element. It already has been checked by other elements in the array.
 <br />
 
-### Displaying Data.
+### 3. Displaying Data.
 Nothing much has been done for this part except for orderedlist being looped over the pairedNames state.
 
 
