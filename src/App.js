@@ -6,11 +6,11 @@ function App() {
   const [dataIsLoaded, setDataIsLoaded] = useState(false);
   const [pairedNames, setPairedNames] = useState([]);
   const getApiData = async () => {
-    await fetch('data.json',{
-      headers : { 
+    await fetch('data.json', {
+      headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
-       }
+      }
     })
       .then(response => response.json())
       .then(result => {
@@ -22,51 +22,37 @@ function App() {
         })
   }
   const pairNamesWithTwoOrMoreTags = () => {
-    let pairedNamesArr = [];
-    ApiData.recipients.forEach(a => {
-      let tagSetA = new Set();
-      a.tags.forEach(tag => {
-        tagSetA.add(tag);
+    //Loop through every recipients (A)
+    for (let i = 0; i < ApiData.recipients.length; i++) {
+      let tagSet = new Set();
+      let tagMatchCount = 0;
+      //Add tags to set to be used for comparison. tagSet will be reset after every iteration of recipients
+      ApiData.recipients[i].tags.forEach(tag => {
+        tagSet.add(tag);
       });
-      ApiData.recipients.forEach(b => {
-        if (a === b) {
-          return;
-        }
-        let tagMatchCount = 0;
-        for (let i = 0; i < b.tags.length; i++) {
-          if (tagSetA.has(b.tags[i])) {
+      //Instead of looping and compare against all elements. Elements are skipped.
+      for (let j = i + 1; j < ApiData.recipients.length; j++) {
+        //Compare the tags with the tagSet
+        for (let x = 0; x < ApiData.recipients[j].tags.length; x++) {
+          if (tagSet.has(ApiData.recipients[j].tags[x])) {
             tagMatchCount++;
           }
-          if (tagMatchCount >= 2) {
-            if (isNotCommonPairs(pairedNamesArr, [a.name, b.name])) {
-              pairedNamesArr.push([a.name, b.name]);
-            }
-          }
         }
-      });
-    });
-    setPairedNames(pairedNamesArr);
-  }
-  const isNotCommonPairs = (pairedNamesArr, names) => {
-    let nameSet = new Set(names);
-    let result = false
-    if (pairedNamesArr.length === 0) {
-      return true;
-    }
-    pairedNamesArr.forEach(pairedNames => {
-      if (!nameSet.has(pairedNames[0]) && !nameSet.has(pairedNames[1])) {
-        result = true;
-      } else {
-        result = false;
+        //if 2 or more tags are matched then the names are added to the state
+        if (tagMatchCount >= 2) {
+          setPairedNames(prevPairedNames => [...prevPairedNames, [ApiData.recipients[i].name, ApiData.recipients[j].name]]);
+        }
+        tagMatchCount = 0;
       }
-    });
-    return result;
+    }
   }
 
+  //Executes when the function is first initialised
   useEffect(() => {
     getApiData();
   }, []);
 
+  //Executes when there is changes towards dataIsLoaded
   useEffect(() => {
     if (dataIsLoaded) {
       pairNamesWithTwoOrMoreTags();
